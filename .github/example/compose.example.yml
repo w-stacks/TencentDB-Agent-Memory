@@ -7,10 +7,14 @@ services:
       - "${MEMORY_CORE_PORT}:8420"
     volumes:
       - memory-core-data:/data/tdai-memory
+      - ./config/tdai-gateway.yaml:/data/config/tdai-gateway.yaml
     environment:
       NODE_ENV: production
       TDAI_GATEWAY_HOST: 0.0.0.0
       TDAI_GATEWAY_PORT: 8420
+      TDAI_GATEWAY_API_KEY: ${TDAI_GATEWAY_API_KEY}
+      TDAI_GATEWAY_CONFIG: ${TDAI_GATEWAY_CONFIG}
+      TDAI_CORS_ORIGINS: ${TDAI_CORS_ORIGINS}
       TDAI_DATA_DIR: /data/tdai-memory
       TDAI_LLM_BASE_URL: ${MEMORY_LLM_BASE_URL}
       TDAI_LLM_API_KEY: ${MEMORY_LLM_API_KEY}
@@ -93,6 +97,8 @@ services:
     image: ${MEMORY_PROXY_IMAGE}
     ports:
       - "${PROXY_PORT}:8096"
+    environment:
+      TDAI_PROXY_ADMIN_API_KEY: ${TDAI_PROXY_ADMIN_API_KEY}
     configs:
       - source: proxy-config
         target: /data/config.yaml
@@ -150,7 +156,7 @@ configs:
         memory:
           enabled: false
       auth:
-        enabled: false
+        enabled: true
       sessionInit:
         enabled: false
       costGuard:
